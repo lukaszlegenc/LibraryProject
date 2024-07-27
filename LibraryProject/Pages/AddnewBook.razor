@@ -1,0 +1,49 @@
+﻿@page "/AddnewBook"
+@inject BooksService booksService
+@inject NavigationManager _NavigationManager
+
+<h3>Add new book</h3>
+
+<label>Book Id</label>
+<input class="form-control" type="text" placeholder="@book.BookId" readonly/>
+<br />
+
+<label>Author</label>
+<input class="form-control" type="text" placeholder="Author" @bind="book.Author" required/>
+<br />
+
+<label>Title</label>
+<input class="form-control" type="text" placeholder="Title" @bind="book.Title" required/>
+<br />
+
+<label>Description</label>
+<input class="form-control" type="text" placeholder="Description" @bind="book.Description"/>
+<br />
+
+<label>Price</label>
+<input class="form-control" type="number" placeholder="Price" @bind="book.Price" required />
+<br />
+
+<button class="btn btn-primary" @onclick="@CreateBook">Save</button>
+<button class="btn btn-danger" @onclick="@Cancel">Cancel</button>
+@code {
+    Book book = new Book();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        book.BookId = Guid.NewGuid();
+    }
+
+    protected async void CreateBook()
+    {
+        await booksService.CreateBookAsync(book);
+        _NavigationManager.NavigateTo("/books", true);
+    }
+
+    void Cancel()
+    {
+        _NavigationManager.NavigateTo("/books", true);
+    }
+}

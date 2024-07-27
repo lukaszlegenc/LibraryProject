@@ -1,0 +1,77 @@
+﻿@page "/EditUser/{id}"
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+@using Microsoft.EntityFrameworkCore;
+@using System;
+@using System.Collections.Generic;
+@using System.Text;
+@inject UserManager<IdentityUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+@inject NavigationManager _NavigationManager
+
+@if(user == null)
+{
+    <span>Data is loading...</span>
+}
+else
+{
+    <h3>EditUser</h3>
+    <label>User Id</label>
+    <input class="form-control" type="text" @bind="@user.Id" readonly />
+    <br />
+
+    <label>Username</label>
+    <input class="form-control" type="text" @bind="@user.UserName" />
+    <br />
+
+    <label>Email</label>
+    <input class="form-control" type="text" @bind="@user.Email" />
+    <br />
+
+    <label>Email Confirmed</label>
+    <input class="form-control" type="text" @bind="@EmailConfirmed" />
+    <br />
+
+    <button class="btn btn-primary" @onclick="@(() => UpdateUser(user))">Save</button>
+    <button class="btn btn-danger" @onclick="@Cancel">Cancel</button>
+
+    <label><input type="checkbox" @bind="@makeAdmin"/>Make admin</label>
+    <label><input type="checkbox" @bind="@makeEmployee"/>Make employee</label>
+}
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    public string EmailConfirmed;
+
+    public bool makeAdmin;
+    public bool makeEmployee;
+
+    IdentityUser user;
+    protected async override Task OnInitializedAsync()
+    {
+        user = await _UserManager.FindByIdAsync(id);
+
+        EmailConfirmed = user.EmailConfirmed.ToString();
+    }
+
+    protected async void UpdateUser(IdentityUser user)
+    {
+        if (makeAdmin)
+        {
+            await _UserManager.AddToRoleAsync(user, "Admin");
+        }
+        if (makeEmployee)
+        {
+            await _UserManager.AddToRoleAsync(user, "Employee");
+        }
+        user.EmailConfirmed = Convert.ToBoolean(EmailConfirmed);
+        await _UserManager.UpdateAsync(user);
+        _NavigationManager.NavigateTo("/administration", true);
+    }
+
+    void Cancel()
+    {
+        _NavigationManager.NavigateTo("/administration", true);
+    }
+}

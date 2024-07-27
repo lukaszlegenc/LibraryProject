@@ -1,0 +1,24 @@
+﻿@inject BooksService booksService
+
+@if(BooksList is null)
+{
+    <p><em>Data is loading...</em></p>
+}
+else
+{
+    @foreach (var book in BooksList)
+    {
+        
+        <BookComponent CurrentBook="book"></BookComponent>
+        <br />
+    }
+}
+
+@code{
+    List<Book> BooksList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BooksList = await Task.Run(() => booksService.GetBooks());
+    }
+}

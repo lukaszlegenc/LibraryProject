@@ -1,0 +1,42 @@
+﻿@inject BooksService booksService
+@inject NavigationManager _NavigationManager
+
+<div id="Info">
+    <b>Title: </b><span>@CurrentBook.Title</span><br />
+    <b>Author: </b><span>@CurrentBook.Author</span><br />
+    <b>Price: </b><span>@CurrentBook.Price</span><br />
+</div>
+
+<div id="description">
+    @if (displayDescription)
+    {
+        <br /><span>@CurrentBook.Description</span>
+    }
+</div>
+
+<br />
+<div>
+    <button class="btn btn-primary m-1" @onclick="@(() => { displayDescription = !displayDescription; })">Show Description</button>
+
+    <AuthorizeView Roles="Employee">
+        <button class="btn btn-danger m-1" @onclick="@(() => DeleteBook(CurrentBook))">Delete</button>
+    </AuthorizeView>
+</div>
+
+@code {
+    [Parameter]
+    public Book CurrentBook { get; set; }
+
+    private bool displayDescription = false;
+
+    public async Task DeleteBook(Book book)
+    {
+        await booksService.DeleteBookAsync(book);
+        _NavigationManager.NavigateTo("/books", true);
+    }
+
+    public void EditBook(Book book)
+    {
+        _NavigationManager.NavigateTo("/EditBook", true);
+    }
+}

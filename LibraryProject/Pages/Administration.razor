@@ -1,0 +1,7 @@
+﻿@page "/administration"
+
+<AuthorizeView Roles="Admin">
+    <Authorized><UserListComponent></UserListComponent></Authorized>
+    <NotAuthorized>You are now authorized to see the content of this page</NotAuthorized>
+</AuthorizeView>
+

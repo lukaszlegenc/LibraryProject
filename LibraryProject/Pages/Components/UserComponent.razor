@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+@using Microsoft.EntityFrameworkCore;
+@inject UserManager<IdentityUser> _UserManager
+@inject NavigationManager _NavigationManager
+
+<tr>
+    <td>@user.Id.Substring(0,8) ...</td>
+    <td>@user.UserName</td>
+    <td>
+        @user.EmailConfirmed
+    </td>
+    <td>
+        <button class="btn btn-primary m-1" @onclick="@(() => EditUser(user.Id))">Edit</button>
+    </td>
+    <td>
+        <button class="btn btn-danger m-1" @onclick="@(() => DeleteUser(user.Id))">Delete</button>
+    </td>
+</tr>
+
+
+@code{
+    [Parameter]
+    public IdentityUser user { get; set; }
+    
+
+    public async Task DeleteUser(string id)
+    {
+        IdentityUser user = await _UserManager.FindByIdAsync(id);
+
+        if(user != null)
+        {
+            await _UserManager.DeleteAsync(user);
+            _NavigationManager.NavigateTo(_NavigationManager.Uri, true);
+        }
+    }
+
+    public void EditUser(string Id)
+    {
+        _NavigationManager.NavigateTo($"/EditUser/{Id}", true);
+    }
+}

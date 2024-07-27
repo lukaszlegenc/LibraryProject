@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+@using Microsoft.EntityFrameworkCore;
+@using System;
+@using System.Collections.Generic;
+@using System.Text;
+@inject UserManager<IdentityUser> _UserManager
+@inject RoleManager<IdentityRole> _RoleManager
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Email Confirmed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (IdentityUser user in Users)
+        {
+            <UserComponent user="user"></UserComponent>
+        }
+    </tbody>
+</table>
+
+@code {
+    public IQueryable<IdentityUser> Users;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Users = _UserManager.Users.Select(x => new IdentityUser
+            {
+                Id = x.Id,
+                UserName = x.UserName,
+                Email = x.Email,
+                PasswordHash = x.PasswordHash,
+                EmailConfirmed = x.EmailConfirmed
+            });
+    }
+}
+
+

@@ -1,0 +1,22 @@
+﻿@page "/books"
+@inject NavigationManager _NavigationManager
+
+<h1>List of Books</h1>
+<br />
+<AuthorizeView Roles="Employee">
+<button class="btn btn-success" @onclick="@AddnewBook">Add Book</button>
+<br />
+</AuthorizeView>
+<br />
+<AuthorizeView>
+    <Authorized><BookListComponent></BookListComponent></Authorized>
+    <NotAuthorized><span>You have to be signed in to see content of this webpage</span></NotAuthorized>
+</AuthorizeView>
+
+
+@code{
+    void AddnewBook()
+    {
+        _NavigationManager.NavigateTo("/AddnewBook", true);
+    }
+}
